@@ -38,7 +38,7 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<ITokens> {
     const user = await this.validateUser(loginDto.username, loginDto.password);
 
-    const jti = Math.random().toString(36).substring(10);
+    const jti = Math.random().toString(36).substring(2);
     const payload = { userId: user.id, username: user.username, jti };
 
     const accessToken = this.jwtService.sign(payload, {
@@ -82,7 +82,7 @@ export class AuthService {
       tokenEntity.isBlocked = true;
       await this.tokenRepository.save(tokenEntity);
 
-      const jti = Math.random().toString(36).substring(10);
+      const jti = Math.random().toString(36).substring(2);
       const payload = {
         userId: tokenEntity.user.id,
         username: tokenEntity.user.username,
