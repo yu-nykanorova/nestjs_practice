@@ -1,4 +1,17 @@
 services:
+  app:
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "3001:3001"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "npm run typeorm -- migration:run --dataSource ./dist/ormconfig.js && node dist/src/main.js"
+
   db:
     image: mysql:8
     environment:
@@ -8,3 +21,9 @@ services:
       - MYSQL_ROOT_PASSWORD=rootuser
     ports:
       - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-prootuser"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
